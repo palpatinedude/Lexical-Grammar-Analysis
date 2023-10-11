@@ -1,0 +1,52 @@
+<xmlDocument> ::= <root>
+<parents> ::= <LinearLayout> | <RelativeLayout>
+<LinearLayout> ::= '<LinearLayout' <linear_attributes> '>' <nonemptycontent>
+'</LinearLayout>' | <
+<RelativeLayout> ::= '<RelativeLayout' <relative_attributes> '>' <content>
+'</RelativeLayout>' | <
+<nonemptycontent> ::= (<nested_elements>)+
+<content> ::= (<nested_elements>)*
+<nested_elements> ::= <TextView> | <ImageView> | <Button> | <RadioButton> |
+<ProgressBar> | <
+<TextView> ::= <start_tag> 'android:text'<eq> <alphanumeric> '"' <TV_opt_attr> '/>'
+<TV_opt_attr> ::= ('android:textColor'<eq> <alphanumeric> '"')?
+<start_tag> ::= '<' <elements_names> <mandatory_attributes> ('android:id'<eq>
+<alphanumeric> '"')?
+<elements_names> ::= 'TextView' | 'ImageView' | 'Button' | 'RadioButton' |
+'ProgressBar' | '
+<TV_opt_attr> ::= ('android:textColor'<eq> <alphanumeric> '"')?
+<ImageView> ::= <start_tag> 'android:src'<eq> <alphanumeric> '"'
+<common_opt_attr>
+<common_opt_attr> ::= android:padding'<eq> <posint> '"')?
+<Button> ::= <start_tag> 'android:text'<eq> <alphanumeric> '"' <common_opt_attr>
+<RadioButton> ::= <start_tag> 'android:text'<eq> <alphanumeric> '"' '/>'
+<RadioButton> ::= <start_tag> 'android:text'<eq> <alphanumeric> '"' '/>'
+<ProgressBar> ::= <start_tag> <PB_opt_attr> '/>'
+<ProgressBar> ::= <start_tag> <PB_opt_attr> '/>'
+<PB_opt_attr> ::= ('android:max'<eq> <posint> '"')?
+<PB_opt_attr> ::= ('android:max'<eq> <posint> '"')?
+('android:progress'<eq> <posint> '"')?('android:progress'<eq> <posint> '"')?
+<RadioGroup> ::= <start_tag> <RG_opt_attr> '>' (<RadioButton>)+ '</RadioGroup>'
+<RadioGroup> ::= <start_tag> <RG_opt_attr> '>' (<RadioButton>)+ '</RadioGroup>'
+<RG_opt_attr> ::= ('android:checkedButton'<eq> <alphanumeric> '"')?
+<RG_opt_attr> ::= ('android:checkedButton'<eq> <alphanumeric> '"')?
+<eq> ::= '='
+<eq> ::= '='
+<comment> ::= '<!
+<comment> ::= '<!----' <commentContent> '' <commentContent> '---->'>'
+<commentContent> ::= <commentText> (<commentText>)*
+<commentContent> ::= <commentText> (<commentText>)*
+<commentText> ::= '
+<commentText> ::= '--'(<alphanumeric> | <space> | <symbol>)*'(<alphanumeric> | <space> | <symbol>)*
+<alphanumeric> ::= <letter> | <digit> | <symbol>
+<alphanumeric> ::= <letter> | <digit> | <symbol>
+<letter> ::= [A
+<letter> ::= [A--ZaZa--z]z]
+<digit> ::= [0
+<digit> ::= [0--9]9]
+<posint> ::= <digit> (<digit>)*
+<posint> ::= <digit> (<digit>)*
+<symbol> ::= [!#$%&'*+.^_`|~]
+<symbol> ::= [!#$%&'*+.^_`|~]
+<space> ::= ' ' | '
+<space> ::= ' ' | '\\t' | 't' | '\\n' | 'n' | '\\r'r'
