@@ -1,0 +1,81 @@
+%{
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include "myparser.tab.h"
+int lineno = 1;
+void ret_print(int tokens, const char *value);
+void remove_quo(char *str);
+extern FILE* yyin; // Declare the input file pointer from the lexer
+extern int yylex(); // Declare the lexer function
+void yyerror();
+%}
+%x COMMENT
+DIGIT [0-9]
+posINTEGER [1-9]{DIGIT}*
+ALPHANUM [a-zA-Z0-9]+|[a-zA-Z0-9]+_[a-zA-Z0-9]+
+TEXT [a-zA-Z0-9[:space:]]+
+/* define all emements,atrributes names,attributes values , others*/
+%%
+"<!--" { BEGIN(COMMENT); }
+<COMMENT>"-->" { BEGIN(INITIAL); }
+<COMMENT>. { /* Ignore characters within a comment */ }
+roots { ret_print(ROOTS, yytext); return ROOTS; }
+Linear_Layout { ret_print(LINLAY, yytext); return LINLAY; }
+RelativeLayout { ret_print(RELLAY, yytext); return RELLAY; }
+TextView { ret_print(TEXTVIEW, yytext); return TEXTVIEW; }
+ImageView { ret_print(IMAGEVIEW, yytext); return IMAGEVIEW; }
+Button { ret_print(BUTTON, yytext); return BUTTON; }
+RadioGroup { ret_print(RADIOGROUP, yytext); return RADIOGROUP; }
+RadioButton { ret_print(RADIOBUTTON, yytext); return RADIOBUTTON; }
+ProgressBar { ret_print(PROGRESSBAR, yytext); return PROGRESSBAR; }
+android:layout_height { ret_print(LAYHEI, yytext); return LAYHEI; }
+android:layout_width { ret_print(LAYWID, yytext); return LAYWID; }
+android:id { ret_print(ID, yytext); return ID; }
+android:orientation { ret_print(ORIENT, yytext); return ORIENT; }
+android:text { ret_print(TEXT ,yytext); return TEXT; }
+android:textColor { ret_print(TEXTCOLOR, yytext); return TEXTCOLOR; }
+android:src { ret_print(SRC, yytext); return SRC; }
+android:padding { ret_print(PADDING, yytext); return PADDING; }
+android:checkedButton { ret_print(CHECKBUT, yytext); return CHECKBUT; }
+android:max { ret_print(MAX, yytext); return MAX; }
+android:progress {ret_print(PRGS,yytext); return PRGS;}
+\"{posINTEGER}\" { remove_quo(yytext); ret_print(POSINT, yytext); return
+POSINT; }
+\"{ALPHANUM}\" { remove_quo(yytext); ret_print(STRING, yytext); return
+STRING; }
+"<" { ret_print(START, yytext); return START; }
+">" { ret_print(END, yytext); return END; }
+"/" { ret_print(SLASH, yytext); return SLASH; }
+"=" { ret_print(EQ,yytext); return EQ; }
+"\n" { lineno += 1; }
+[ \t\r\f]+ {/* eat up whitespace */}
+. { yyerror("Unrecognized character"); }
+%%
+/* functions */
+void remove_quo(char *str) {
+ int len = strlen(str);
+ // Check if the string is enclosed in double quotes
+ if (len >= 2 && str[0] == '"' && str[len - 1] == '"') {
+ // Remove the quotes by shifting the characters to the left
+ for (int i = 0; i < len - 2; i++) {
+ str[i] = str[i + 1];
+ }
+ // Null-terminate the string
+ str[len - 2] = '\0';
+ }
+ else {
+ fprintf(stderr, "Error: Attribute value is not enclosed in double quotes: %s\n",
+str);
+ exit(1); // Exit with an error code
+ }
+}
+void ret_print(int tokens, const char *value) {
+ printf("Token: %d, Value: %s\n", tokens, value);
+}
+int yywrap() {
+ // Return 1 to indicate EOF (no more input sources)
+ return 1;
+}
