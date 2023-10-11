@@ -1,0 +1,29 @@
+<Linear_Layout 
+android:layout_width=match_parent
+android:layout_height=match_parent
+android:id=LL1
+android:orientation=vertical >
+<TextView
+android:layout_width=20
+android:layout_height=20
+android:text=thirddocument
+android:id=TV/>
+<!--Comment comment comment-->
+<!--testing comment-->
+<!--more comments-->
+<!--stop-->
+<ProgressBar
+android:layout_width=wrap_content
+android:layout_height=wrap_content
+android:progress=85
+android:max=100/>
+<Linear_Layout
+android:layout_width=match_parent
+android:layout_height=match_parent >
+<ImageView
+android:layout_width=20
+android:layout_height=20
+android:src=jpg
+android:padding=569/>
+</Linear_Layout>
+</Linear_Layout>
