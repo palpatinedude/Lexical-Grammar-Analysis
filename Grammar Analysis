@@ -1,0 +1,129 @@
+%{
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+extern FILE *yyin;
+extern int yylex(void);
+void checkmandatory(const char *elementName) ;
+extern void yyerror(const char *s);
+bool hasLayoutWidth = false;
+bool hasLayoutHeight = false;
+void yyerror();
+%}
+%token ROOTS 1
+%token LAYHEI 2
+%token LAYWID 3
+%token START 4
+%token TEXTVIEW 5
+%token IMAGEVIEW 6
+%token BUTTON 7
+%token RADIOGROUP 8
+%token RADIOBUTTON 9
+%token PROGRESSBAR 10
+%token END 11
+%token POSINT 12
+%token STRING 13
+%token ID 14
+%token ORIENT 15
+%token TEXT 16
+%token TEXTCOLOR 17
+%token SRC 18
+%token PADDING 19
+%token CHECKBUT 20
+%token MAX 21
+%token SLASH 22
+%token EQ 23
+%token LINLAY 24
+%token RELLAY 25
+%token PRGS 26
+%start XmlDocument
+%%
+XmlDocument: content_list;
+content_list: root_elements
+ | content_list root_elements
+ ;
+root_elements : LinearLayout | RelativeLayout;
+LinearLayout: START LINLAY {printf("Found LinearLayout\n"); }mandatory_attributes {
+checkmandatory("LinearLayout");}optional_linear_attributes END nested_elements
+START SLASH LINLAY END;
+RelativeLayout: START RELLAY {printf("Found
+RelativeLayout\n");}mandatory_attributes{checkmandatory("RelativeLayout");}
+optional_relative_attribute END nested_elements START SLASH RELLAY END;
+mandatory_attributes: LAYWID EQ value {hasLayoutWidth = true;} LAYHEI EQ value
+{hasLayoutHeight = true;};
+nested_elements: nested_element
+ | nested_elements nested_element
+ ;
+nested_element: LinearLayout
+ | RelativeLayout
+ | TextView
+ | ImageView
+ | Button
+ | RadioGroup
+ | RadioButton
+ | ProgressBar
+;
+TextView: START TEXTVIEW {printf("Found
+TextView\n");}mandatory_attributes{checkmandatory("TextView");}
+mandatory_attributes_TV optional_textview_attributes SLASH END;
+ImageView: START IMAGEVIEW {printf("Found
+ImageView\n");}mandatory_attributes{checkmandatory("ImageView");}
+mandatory_attributes_IV optional_imageview_attributes SLASH END;
+Button: START BUTTON {printf("Found Button\n");}mandatory_attributes
+{checkmandatory("Button");} mandatory_attributes_TV
+optional_imageview_attributes SLASH END;
+RadioGroup: START RADIOGROUP {printf("Found
+RadioGroup\n");}mandatory_attributes {checkmandatory("RadioGroup");}
+optional_radiogroup_attributes END nested_radiobuttons START SLASH
+RADIOGROUP END;
+RadioButton: START RADIOBUTTON {printf("Found
+RadioButton\n");}mandatory_attributes
+{checkmandatory("RadioButton");}mandatory_attributes_TV
+optional_relative_attribute SLASH END;
+ProgressBar: START PROGRESSBAR { printf("Found
+ProgressBar\n");}mandatory_attributes
+{checkmandatory("ProgressBar");}optional_progressbar_attributes SLASH END;
+optional_linear_attributes: opla | optional_linear_attributes opla | /*empty*/;
+opla: ID EQ STRING| ORIENT EQ STRING;
+optional_relative_attribute: ID EQ STRING|/*empty*/;
+mandatory_attributes_TV: TEXT EQ STRING;
+optional_textview_attributes: opta|optional_textview_attributes opta |/*empty*/ ;
+opta: ID EQ STRING| TEXTCOLOR EQ STRING;
+mandatory_attributes_IV: SRC EQ STRING;
+optional_imageview_attributes: opia|optional_imageview_attributes
+opia|/*empty*/;
+opia: ID EQ STRING| PADDING EQ POSINT;
+
+optional_radiogroup_attributes: opra|optional_radiogroup_attributes
+opra|/*empty*/;
+opra: ID EQ STRING| CHECKBUT EQ STRING;
+optional_progressbar_attributes: oppa|optional_progressbar_attributes
+oppa|/*empty*/;
+oppa: ID EQ STRING| MAX EQ POSINT| PRGS EQ POSINT;
+
+value: STRING
+ | POSINT
+ ;
+nested_radiobuttons: RadioButton
+ | nested_radiobuttons RadioButton
+ ;
+
+
+%%
+void checkmandatory(const char *elementName) {
+ if (!hasLayoutWidth || !hasLayoutHeight) {
+ fprintf(stderr, "Error: Element <%s> is missing mandatory attributes\n",
+elementName);
+ exit(EXIT_FAILURE);
+ }
+}
+void yyerror(const char *s) {
+ fprintf(stderr, "Parser error: %s\n", s);
+}
+int main (int argc, char *argv[]) {
+ int flag;
+ yyin = fopen(argv[1], "r");
+ flag = yyparse();
+ fclose(yyin);
+ return flag;
+}
