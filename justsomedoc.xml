@@ -1,0 +1,24 @@
+<RelativeLayout
+android:layout_width=match_parent
+android:layout_height=match_parent>
+<RelativeLayout
+android:layout_width=match_parent
+android:layout_height=wrap_content
+/>
+<!--Comments are fun-->
+<TextView
+android:layout_width=20
+android:layout_height=20
+android:text=plsworkkk
+android:id=TV1/>
+<ImageView
+android:layout_width=20
+android:layout_height=20
+android:src=jpg
+android:padding=569/>
+<Button
+android:layout_width=wrap_content
+android:layout_height=wrap_content
+/>
+<!--This is a comment-->
+</RelativeLayout>
